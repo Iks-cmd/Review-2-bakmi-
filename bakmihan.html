@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Guest Review - Bakmi Han</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* 1920s America Theme Styles */
+        :root {
+            --primary: #2a2d34;    /* Dark blue-black */
+            --secondary: #d4af37;  /* Gold */
+            --accent: #c19a6b;     /* Bronze */
+            --light: #e8e8e8;      /* Light cream */
+            --dark: #1a1a1a;       /* Near black */
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f1e6;
+            background-image: url('https://japrinetwork.com/wp-content/uploads/2025/01/bakmihan-20250115-0001.jpg');
+            background-attachment: fixed;
+            color: var(--dark);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+        }
+        
+        .vintage-border {
+            border: 8px solid transparent;
+            border-image: url('https://japrinetwork.com/wp-content/uploads/2025/01/bakmihan-20250115-0001.jpg') 30 stretch;
+        }
+        
+        .art-deco-card {
+            background: white;
+            border-radius: 0;
+            border: 2px solid var(--secondary);
+            box-shadow: 8px 8px 0 rgba(42, 45, 52, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .art-deco-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .star-rating {
+            direction: rtl;
+            unicode-bidi: bidi-override;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+        }
+        .star-rating input {
+            display: none;
+        }
+        .star-rating label {
+            color: #d1d5db;
+            font-size: 2.25rem;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: var(--secondary);
+            transform: scale(1.1);
+        }
+        .star-rating input:checked + label {
+            transform: scale(1.15);
+        }
+        
+        .vintage-input {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--accent);
+            border-radius: 0;
+            padding: 10px 15px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .vintage-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        }
+        
+        .vintage-button {
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vintage-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .animate-fade-in.delay-100 { animation-delay: 0.1s; }
+        .animate-fade-in.delay-200 { animation-delay: 0.2s; }
+        
+        @media (max-width: 640px) {
+            .art-deco-card {
+                border-width: 1px;
+                box-shadow: 4px 4px 0 rgba(42, 45, 52, 0.2);
+            }
+            
+            .vintage-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* ========== WELCOME POPUP ADDITIONS ========== */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .welcome-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .welcome-popup {
+            background: linear-gradient(135deg, var(--secondary), #b91c1c);
+            padding: 2rem;
+            border-radius: 0;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            border: 2px solid var(--secondary);
+            box-shadow: 8px 8px 0 rgba(42, 45, 52, 0.2);
+        }
+        
+        .welcome-overlay.active .welcome-popup {
+            transform: scale(1);
+        }
+        
+        .welcome-popup h2 {
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-popup p {
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+
+<!-- Expired Trial Popup -->
+<div class="expired-overlay fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" id="expiredOverlay">
+    <div class="expired-popup art-deco-card p-6 max-w-md w-full mx-4 animate-fade-in">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Masa Trial Anda Telah Habis!</h2>
+            <p class="mb-3">Fitur ini hanya tersedia selama periode trial (27 Mei - 31 Mei 2025).</p>
+            <p class="mb-4">Silahkan hubungi admin untuk memperpanjang masa penggunaan.</p>
+            <button onclick="document.getElementById('expiredOverlay').classList.add('hidden')" 
+                    class="vintage-button mt-4">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Popup -->
+<div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-popup art-deco-card">
+        <h2><i class="fas fa-crown mr-2"></i>Selamat Datang di Bakmi Han!</h2>
+        <p>Terima kasih telah mengunjungi kami. Berikan review Anda dan dapatkan <strong>Pangsit Goreng GRATIS</strong>!</p>
+        <button class="vintage-button mt-4" onclick="closeWelcomePopup()">
+            <i class="fas fa-pencil-alt mr-2"></i>Tulis Review Sekarang
+        </button>
+    </div>
+</div>
+
+<div class="text-center mb-8 mt-4 sm:mt-10">
+    <img src="https://i.ibb.co/hK5x25B/Bakmi-Han-Logo.webp" alt="Logo Bakmi Han" class="mx-auto w-24 h-24 object-contain mb-4 rounded-full border-4 border-yellow-600 shadow-xl transform hover:scale-105 transition-transform duration-300">
+    <h1 class="text-3xl font-extrabold tracking-tight">Bakmi Han</h1>
+    <p class="text-md mt-2">Bantu kami meningkatkan layanan dengan menulis review singkat Anda</p>
+</div>
+
+<section class="max-w-xl mx-auto w-full art-deco-card p-6 mb-8 animate-fade-in" style="background-color: rgba(255, 253, 245, 0.9);">
+    <div class="flex items-start">
+        <div class="flex-shrink-0 pt-1">
+            <i class="fas fa-gift text-yellow-600 text-2xl mr-3"></i>
+        </div>
+        <div>
+            <h2 class="font-bold text-xl mb-2">Review Anda Berhadiah!</h2>
+            <p class="text-sm mt-1">Tinggalkan review jujur Anda dan tunjukkan ke staf kami untuk mendapatkan:</p>
+            <ul class="mt-3 space-y-1 text-sm">
+                <li class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-yellow-600"></i>
+                    <span>Pangsit Goreng GRATIS</span>
+                </li>
+                <li class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-yellow-600"></i>
+                    <span>Diskon 10% untuk pembelian berikutnya</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-xl mx-auto w-full art-deco-card p-6 mb-8 animate-fade-in delay-100">
+    <h2 class="font-bold text-xl mb-4 flex items-center">
+        <i class="fas fa-utensils text-yellow-600 mr-2 text-xl"></i>
+        <span>Rekomendasi Menu Favorit Kami</span>
+    </h2>
+    <div class="grid md:grid-cols-2 gap-5">
+        <div class="flex items-center gap-4 bg-gray-50 p-3 hover:shadow-md transition-shadow duration-200" style="background-color: rgba(245, 241, 230, 0.7);">
+            <img src="https://i.ibb.co/L519V36/Pangsit-Goreng.webp" alt="Pangsit Goreng Spesial" class="w-16 h-16 object-cover shadow-sm border border-yellow-200">
+            <div>
+                <h3 class="font-semibold">Pangsit Goreng Spesial</h3>
+                <p class="text-xs mt-1 line-clamp-2">Crispy pangsit isi sayur dan ayam, disajikan dengan saus pedas manis yang khas.</p>
+                <div class="mt-2 flex items-center text-xs font-medium">
+                    <span class="bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-full text-xs">🌟 Pelanggan Favorit</span>
+                    <span class="ml-3 text-yellow-700 font-bold">Rp 25.000</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 bg-gray-50 p-3 hover:shadow-md transition-shadow duration-200" style="background-color: rgba(245, 241, 230, 0.7);">
+            <img src="https://i.ibb.co/3F9Rz2q/Kopi-Hitam.webp" alt="Kopi Hitam Klasik" class="w-16 h-16 object-cover shadow-sm border border-gray-200">
+            <div>
+                <h3 class="font-semibold">Kopi Hitam Klasik</h3>
+                <p class="text-xs mt-1 line-clamp-2">Blend khusus dengan aroma kuat dan aftertaste yang panjang, cocok untuk penikmat kopi.</p>
+                <div class="mt-2 flex items-center text-xs font-medium">
+                    <span class="bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-full text-xs">☕ Best Seller</span>
+                    <span class="ml-3 text-yellow-700 font-bold">Rp 18.000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="w-full max-w-xl mx-auto art-deco-card overflow-hidden mb-12 animate-fade-in delay-200">
+    <div class="p-6 sm:p-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center justify-center">
+            <i class="fas fa-comment-dots text-yellow-600 mr-3 text-2xl"></i>
+            <span>Berikan Review Anda</span>
+        </h2>
+        
+        <form id="feedback-form" class="space-y-6">
+            <div>
+                <label for="guest-name" class="block text-sm font-medium mb-2">Nama Anda (Opsional)</label>
+                <input type="text" id="guest-name" placeholder="Misalnya: Budi Santoso"
+                       class="vintage-input w-full" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2">Rating Layanan</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" title="Sangat Baik">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="Baik">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" checked />
+                    <label for="star3" title="Cukup Baik">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="Buruk">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="Sangat Buruk">★</label>
+                </div>
+            </div>
+
+            <div>
+                <label for="comment" class="block text-sm font-medium mb-2">Bagaimana pengalaman Anda hari ini?</label>
+                <textarea id="comment" rows="4" placeholder="Berikan pendapat Anda tentang pelayanan kami, suasana, atau produk yang Anda nikmati."
+                          class="vintage-input w-full" required></textarea>
+                <p class="text-xs mt-1">Review Anda sangat berarti bagi kami!</p>
+            </div>
+
+            <div>
+                <label for="dish-recommendation" class="block text-sm font-medium mb-2">Saran Menu atau Peningkatan</label>
+                <textarea id="dish-recommendation" rows="3" placeholder="Apakah ada menu yang menurut Anda perlu kami tambahkan atau tingkatkan? Ide apa pun diterima!"
+                          class="vintage-input w-full"></textarea>
+                <p class="text-xs mt-1">Opsional: Bantu kami berinovasi dengan ide menu Anda.</p>
+            </div>
+
+            <div class="flex items-center justify-center mt-4">
+                <input id="contact-permission" type="checkbox" class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded cursor-pointer">
+                <label for="contact-permission" class="ml-2 block text-sm select-none">
+                    Izinkan kami menghubungi Anda untuk follow up
+                </label>
+            </div>
+
+            <button type="submit"
+                    class="w-full vintage-button mt-6">
+                <i class="fas fa-paper-plane"></i> Kirim Review
+            </button>
+        </form>
+
+        <div id="success-message" class="hidden mt-6 p-5 rounded-xl text-center" style="background-color: rgba(236, 253, 245, 0.9); border: 1px solid #34d399;">
+            <div class="flex items-center justify-center text-green-700 mb-2">
+                <i class="fas fa-check-circle text-3xl mr-3"></i>
+                <h3 class="font-bold text-lg">Terima kasih atas review-nya!</h3>
+            </div>
+            <p class="mt-2 text-sm">Kami sangat menghargai masukan Anda. Tunjukkan pesan ini ke kasir untuk mendapatkan hadiah spesial Anda!</p>
+        </div>
+        
+        <div id="error-message" class="hidden mt-6 p-5 rounded-xl text-center" style="background-color: rgba(254, 242, 242, 0.9); border: 1px solid #f87171;">
+            <div class="flex items-center justify-center text-red-700 mb-2">
+                <i class="fas fa-exclamation-circle text-3xl mr-3"></i>
+                <h3 class="font-bold text-lg">Gagal mengirim review</h3>
+            </div>
+            <p class="mt-2 text-sm">Mohon maaf, terjadi kesalahan. Silakan coba lagi atau gunakan tombol WhatsApp di bawah.</p>
+        </div>
+
+        <div id="whatsapp-share" class="hidden mt-8 text-center animate-fade-in">
+            <p class="text-md mb-4">Ingin review Anda segera sampai? Bagikan juga melalui WhatsApp:</p>
+            <a id="whatsapp-link" href="#" target="_blank"
+               class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white py-3 px-8 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
+                <i class="fab fa-whatsapp text-2xl mr-2"></i> Kirim via WhatsApp
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-12 mb-6 text-center text-sm">
+    <p>&copy; <span id="current-year"></span> Bakmi Han. Semua Hak Dilindungi.</p>
+    <div class="mt-3 flex justify-center space-x-6">
+        <a href="#" class="text-yellow-600 hover:text-yellow-800 transition transform hover:scale-125"><i class="fab fa-instagram text-xl"></i></a>
+        <a href="#" class="text-blue-600 hover:text-blue-800 transition transform hover:scale-125"><i class="fab fa-facebook-f text-xl"></i></a>
+        <a href="#" class="text-red-600 hover:text-red-800 transition transform hover:scale-125"><i class="fab fa-youtube text-xl"></i></a>
+    </div>
+</footer>
+
+<script>
+    // Set tahun otomatis di footer
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    // Check trial period and show popup if expired
+    function checkTrialPeriod() {
+        const trialEndDate = new Date('2025-05-31T23:59:59');
+        const currentDate = new Date();
+        
+        if (currentDate > trialEndDate) {
+            document.getElementById('expiredOverlay').classList.remove('hidden');
+        }
+    }
+
+    // Welcome Popup Logic
+    function showWelcomePopup() {
+        const hasVisited = localStorage.getItem('visitedBakmiHan');
+        const trialOverlay = document.getElementById('expiredOverlay');
+        
+        if (!hasVisited && !trialOverlay.classList.contains('active')) {
+            setTimeout(() => {
+                document.getElementById('welcomeOverlay').classList.add('active');
+                localStorage.setItem('visitedBakmiHan', 'true');
+            }, 1500);
+        }
+    }
+
+    function closeWelcomePopup() {
+        document.getElementById('welcomeOverlay').classList.remove('active');
+    }
+
+    // Run checks when page loads
+    window.addEventListener('load', function() {
+        checkTrialPeriod();
+        showWelcomePopup();
+    });
+
+    document.getElementById('feedback-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const guest = document.getElementById('guest-name').value.trim() || "Anonim";
+        const rating = parseInt(document.querySelector('input[name="rating"]:checked').value);
+        const comment = document.getElementById('comment').value.trim();
+        const dishRecommendation = document.getElementById('dish-recommendation').value.trim();
+        const contactPermission = document.getElementById('contact-permission').checked;
+
+        if (!comment) {
+            document.getElementById('success-message').classList.add('hidden');
+            document.getElementById('error-message').classList.remove('hidden');
+            document.getElementById('error-message').innerHTML = `
+                <div class="flex items-center justify-center text-red-700 mb-2">
+                    <i class="fas fa-exclamation-circle text-3xl mr-3"></i>
+                    <h3 class="font-bold text-lg">Review tidak bisa dikirim!</h3>
+                </div>
+                <p class="mt-2 text-sm">Kolom **'Bagaimana pengalaman Anda hari ini?'** wajib diisi.</p>
+            `;
+            document.getElementById('error-message').scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        const getRatingText = (ratingValue) => {
+            switch (ratingValue) {
+                case 1: return "Sangat Buruk";
+                case 2: return "Buruk";
+                case 3: return "Cukup Baik";
+                case 4: return "Baik";
+                case 5: return "Sangat Baik";
+                default: return "Tidak Diketahui";
+            }
+        };
+
+        const ratingText = getRatingText(rating);
+
+        const reviewData = {
+            guest: guest,
+            rating: rating,
+            ratingText: ratingText,
+            comment: comment,
+            dishRecommendation: dishRecommendation,
+            timestamp: new Date().toISOString(),
+            contactPermission: contactPermission
+        };
+        localStorage.setItem('lastReview', JSON.stringify(reviewData));
+
+        document.getElementById('success-message').classList.remove('hidden');
+        document.getElementById('error-message').classList.add('hidden');
+        
+        let message = `*NEW CUSTOMER REVIEW*\n\n`; 
+        message += `==============================\n\n`;
+        message += `*Name:* ${guest}\n`; 
+        message += `*Service Rating:* ${ratingText} (${rating}/5)\n\n`; 
+        message += `*Review:*\n"${comment}"\n\n`; 
+        
+        if (dishRecommendation) {
+            message += `*Menu/Improvement Suggestion:*\n"${dishRecommendation}"\n\n`; 
+        }
+        
+        message += `*Follow Up Permission:* ${contactPermission ? 'Allowed' : 'Not Allowed'}\n\n`; 
+        message += `*Review Date:* ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}\n`; 
+        message += `*Review Time:* ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}\n\n`; 
+        message += `==============================`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/6285770009704?text=${encodedMessage}`; 
+        
+        document.getElementById('whatsapp-link').href = whatsappUrl;
+        document.getElementById('whatsapp-share').classList.remove('hidden');
+        
+        document.getElementById('feedback-form').reset();
+        document.querySelector('input[name="rating"][value="3"]').checked = true;
+        
+        document.getElementById('success-message').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // Animasi fokus untuk elemen form
+    document.querySelectorAll('.vintage-input').forEach(el => {
+        el.addEventListener('focus', () => {
+            el.classList.add('shadow-md');
+        });
+        el.addEventListener('blur', () => {
+            el.classList.remove('shadow-md');
+        });
+    });
+</script>
+
+</body>
+</html>
